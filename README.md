@@ -36,6 +36,6 @@ Here's how the website looks in action:
 
 ![2](https://github.com/user-attachments/assets/738a6555-8f4e-48a1-9afe-97671be87310)
 
-**Downloadable Match Report (PDF Preview)**
+**Match Report (PDF Preview)**
 
 - The detailed match report is available in the repository:  **[View Sample Match Report (PDF)](match_report.pdf)**  
