@@ -1,0 +1,2 @@
+# MatchMyCV_Resume_And_Job_Description_Matching_Tool
+MatchMyCV is a Django-based web application that helps job seekers optimize their resumes for specific job descriptions. Users can upload their resume (PDF format) and paste a job description to receive a detailed analysis of how well their resume aligns with the role. Calculates match %, highlights missing keywords, and offers improvement tips.
