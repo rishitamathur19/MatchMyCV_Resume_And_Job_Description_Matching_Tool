@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Keyword Scanner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-md rounded-xl p-8 w-full max-w-xl">
+        <h1 class="text-2xl font-bold mb-1 text-center text-indigo-600">MatchMyCv</h1>
+        <h4 class="text-lg font-bold mb-4 text-center text-indigo-400">Resume & Job Description Matching Tool</h4>
+        <p class="text-center text-gray-500 mb-6">Upload your resume and paste the job description to get started.</p>
+
+        <!-- FORM STARTS HERE -->
+        <form method="post" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- UPLOAD RESUME -->
+            <div>
+                <label for="resume" class="block text-sm font-medium text-gray-700">Upload Resume (PDF only)</label>
+                <input type="file" name="resume" accept=".pdf" required
+                    class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+            </div>
+
+            <!-- ENTER JOB DESCRIPTION -->
+            <div>
+                <label for="job_description" class="block text-sm font-medium text-gray-700">Paste Job
+                    Description</label>
+                <textarea name="job_description" rows="6" required placeholder="Paste the job description here..."
+                    class="mt-1 block w-full border border-gray-300 rounded-lg shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div class="text-center">
+                <button type="submit"
+                    class="bg-indigo-600 text-white font-semibold px-6 py-2 rounded-lg shadow hover:bg-indigo-700 transition-all">
+                    Analyze Resume
+                </button>
+            </div>
+        </form>
+        <!-- FORM ENDS HERE -->
+    </div>
+</body>
+
+</html>

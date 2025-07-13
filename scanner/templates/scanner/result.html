@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Resume Match Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<div class="bg-gray-100 py-10 px-4">
+  <div class="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-md p-6 sm:p-8">
+    <h1 class="text-2xl sm:text-3xl font-bold text-center text-indigo-600 mb-8">
+      Resume Keyword Scanner
+    </h1>
+
+    <!-- CHART AND MATCH SCORE -->
+    <div class="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8">
+      <div class="w-40 h-40">
+        <canvas id="matchChart"></canvas>
+      </div>
+      <div class="text-center sm:text-left">
+        <p class="text-base font-semibold text-indigo-400">Match Score</p>
+        <p class="text-4xl font-bold text-indigo-500">{{ match_percentage }}%</p>
+      </div>
+    </div>
+
+    <!-- MISSING KEYWORDS -->
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-2">Missing Keywords</h2>
+      <ul class="list-disc pl-5 space-y-1 text-sm sm:text-base">
+        {% for word in missing_keywords %}
+          <li class="text-red-500">{{ word }}</li>
+        {% empty %}
+          <li class="text-green-600">All keywords matched. Great job!</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- IMPROVEMENT TIPS -->
+    <div>
+      <h2 class="text-lg font-bold text-gray-800 mb-2">Improvement Tips</h2>
+      {% if missing_keywords %}
+        <p class="text-gray-700 text-sm sm:text-base">
+          Mention experience with 
+          {% for word in missing_keywords|slice:":3" %}
+            {{ word }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}.
+        </p>
+      {% else %}
+        <p class="text-green-600">Your resume aligns well with the job description.</p>
+      {% endif %}
+    </div>
+    
+    <form action="{% url 'download_pdf' %}" method="POST" class="text-center mt-2">
+        {% csrf_token %}
+        <input type="hidden" name="resume_text" value="{{ resume_text }}">
+        <input type="hidden" name="job_description" value="{{ job_description }}">
+        <input type="hidden" name="match_percentage" value="{{ match_percentage }}">
+        {% for word in matched_keywords %}
+          <input type="hidden" name="matched_keywords" value="{{ word }}">
+        {% endfor %}
+        {% for word in missing_keywords %}
+          <input type="hidden" name="missing_keywords" value="{{ word }}">
+        {% endfor %}
+    
+        <button type="submit"
+          class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-xl font-semibold shadow">
+          Download PDF Report
+        </button>
+    </form>
+  </div>
+
+  <!-- PIE CHART SCRIPT -->
+  <script>
+  const score = {{ match_percentage|default:0 }};
+  const ctx = document.getElementById('matchChart').getContext('2d');
+
+  const centerText = {
+    id: 'centerText',
+    beforeDraw(chart) {
+      const { width, height } = chart;
+      const ctx = chart.ctx;
+      ctx.restore();
+      const fontSize = (height / 100).toFixed(2);
+      ctx.font = `${fontSize}em sans-serif`;
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = "#4F46E5"; // Tailwind indigo-600
+
+      const text = `${score}%`;
+      const textX = Math.round((width - ctx.measureText(text).width) / 2);
+      const textY = height / 2;
+
+      ctx.fillText(text, textX, textY);
+      ctx.save();
+    }
+  };
+
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Matched', 'Unmatched'],
+      datasets: [{
+        data: [score, 100 - score],
+        backgroundColor: ['#4F46E5', '#E5E7EB'], // Indigo for matched, gray for rest
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '75%', // Controls ring thickness
+      animation: {
+        animateRotate: true,
+        duration: 1200
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { enabled: true }
+      }
+    },
+    plugins: [centerText]
+  });
+</script>
+
+</body>
+</html>
